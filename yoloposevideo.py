@@ -1,52 +1,13 @@
-import re
+import pandas as pd
 from ultralytics import YOLO
 import numpy as np
-import pprint
 import heatmap
-import torch
-import time
-
-import distance_estimation as de
-from test import transform
-
+import os
+import socialdist
 
 model = YOLO('yolov8m-pose.pt')
 violationsVsFrame = []
-# import cv2
-
-# # Open the input video file
-# input_file = 'resizedcrowd_mall1.mp4'
-# cap = cv2.VideoCapture(input_file)
-
-# # Define the output video file
-# output_file = 'resizedcrowd_mall1.mp4'
-
-# # Get the frame dimensions of the input video
-# frame_width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
-# frame_height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
-
-# # Define the target dimensions (640x640)
-# target_width, target_height = 1280, 720
-
-# # Create VideoWriter object to save the resized video
-# fourcc = cv2.VideoWriter_fourcc(*'mp4v')
-# out = cv2.VideoWriter(output_file, fourcc, 15.0, (target_width, target_height))
-
-# # Resize each frame and write it to the output video
-# while True:
-#     ret, frame = cap.read()
-#     if not ret:
-#         break
-    
-#     # Resize the frame to the target dimensions
-#     resized_frame = cv2.resize(frame, (target_width, target_height))
-
-#     # Write the resized frame to the output video
-#     out.write(resized_frame)
-
-# # Release video capture and writer objects
-# cap.release()
-# out.release()
+novsframe = []
 
 # print("Resized video saved successfully!")
 # test = False
@@ -55,6 +16,7 @@ violationsVsFrame = []
 
 
 def main_code():
+    #os.remove('file.csv')
     results = model("transformed_video.mp4", show=True,stream=True)
     for r in results:
         no_of_persons = r.keypoints.xy.size(0)
@@ -76,7 +38,7 @@ def main_code():
             head_point = keypoint_data.xy[_][0]
             right_point = keypoint_data.xy[_][16]
             if (head_point == 0).any() or (right_point == 0).any():
-                continue  # Skip this tensor if it contains any 0 values
+                continue  # to Skip tensor if it contains any 0 values
 
             posefeats.append(head_point)
             posefeathead.append(head_point)
@@ -135,12 +97,26 @@ def main_code():
         # print(xn,yn)
         # print(xnorm,ynorm)
         # pprint.pprint(xnnorm)
+
+        
+
+        novsframe.append(socialdist.main_part(cordarray,500))
+        no = {'nio':novsframe}
+        df1 = pd.DataFrame(no)
+        df1.to_csv('file1.csv')
+
         cor = np.zeros([720,1280], dtype=int)
         for i in range(len(cordarray)):
             cor[int(cordarray[i][1]//1)][int(cordarray[i][0]//1)]=1
             # cor[xnorm[i]][ynorm[i]]=1
         
         violationsVsFrame.append(heatmap.heatmap(cor))
+        vioDict = {'vio': violationsVsFrame}
+        df = pd.DataFrame(vioDict)
+        df.to_csv('file.csv')
+
+
+
             # tl_x = box_data.xyxy[_].numpy()
             # confidence = box_data.conf.numpy()
 
