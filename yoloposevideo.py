@@ -7,7 +7,7 @@ import socialdist
 
 model = YOLO('yolov8m-pose.pt')
 violationsVsFrame = []
-novsframe = []
+warningsVsFrame = []
 
 # print("Resized video saved successfully!")
 # test = False
@@ -16,7 +16,12 @@ novsframe = []
 
 
 def main_code():
-    #os.remove('file.csv')
+    warningData = int(input("Enter warning threshold:"))
+    violationData = int(input("Enter violation threshold:"))
+    if(os.path.exists('file.csv')):
+        os.remove('file.csv')
+    if(os.path.exists('file2.csv')):
+        os.remove('file2.csv')
     results = model("transformed_video.mp4", show=True,stream=True)
     for r in results:
         no_of_persons = r.keypoints.xy.size(0)
@@ -100,21 +105,22 @@ def main_code():
 
         
 
-        novsframe.append(socialdist.main_part(cordarray,500))
-        no = {'nio':novsframe}
-        df1 = pd.DataFrame(no)
-        df1.to_csv('file1.csv')
+        
 
         cor = np.zeros([720,1280], dtype=int)
         for i in range(len(cordarray)):
             cor[int(cordarray[i][1]//1)][int(cordarray[i][0]//1)]=1
             # cor[xnorm[i]][ynorm[i]]=1
         
-        violationsVsFrame.append(heatmap.heatmap(cor))
+        violations, warnings=(heatmap.heatmap(cor,warningData,violationData))
+        violationsVsFrame.append(violations)
+        warningsVsFrame.append(warnings)
         vioDict = {'vio': violationsVsFrame}
+        warnDict = {'warn':warningsVsFrame}
         df = pd.DataFrame(vioDict)
+        df2 =pd.DataFrame(warnDict)
         df.to_csv('file.csv')
-
+        df2.to_csv('file2.csv')
 
 
             # tl_x = box_data.xyxy[_].numpy()
