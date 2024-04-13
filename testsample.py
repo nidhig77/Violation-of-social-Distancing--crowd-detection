@@ -22,7 +22,7 @@ def bird_eye_tranform(image, points, pts2):
 
 if __name__=="__main__": 
 	pts2 = np.float32([[0,0],[0,720],[1280,0],[1280,720]])
-	vid = cv2.VideoCapture("airport.mp4")
+	vid = cv2.VideoCapture("crowd_street.mp4")
 	success, image = vid.read()
 	while success:
 		success, image =vid.read()
