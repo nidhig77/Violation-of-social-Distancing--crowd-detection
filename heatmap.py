@@ -42,7 +42,7 @@ def heatmap(anum2,warnThresh,violationThresh):
 
     print("Number of violations:",violations)
 
-    hm_blurred = cv2.GaussianBlur(hm.astype(float), (349, 349), 0)
+    hm_blurred = cv2.GaussianBlur(hm.astype(float), (499, 499), 0)
     
     plt.imshow(hm_blurred, cmap=cmap, interpolation='gaussian')
     plt.colorbar(ticks=[0, 1, 2], label='Value').set_ticklabels(['Safe', 'Warning', 'Violation'])
