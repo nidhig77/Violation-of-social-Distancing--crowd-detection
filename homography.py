@@ -32,5 +32,5 @@ def homography(avg_height):
     
     avg=statistics.mean(avg_tot)
     vioDist = (avg/avg_height)*1.25
-    warnDist = (avg/avg_height)*2
+    warnDist = (avg/avg_height)*2.5
     return vioDist,warnDist

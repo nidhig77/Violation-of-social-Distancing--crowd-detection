@@ -22,6 +22,7 @@ def bird_eye_tranform(image, points, pts2):
 	return transformed_frame
 
 if __name__=="__main__": 
+	avg_height = float(input("Enter average height of citizens:"))
 	pts2 = np.float32([[0,0],[0,720],[1280,0],[1280,720]])
 	vid = cv2.VideoCapture("crowd_mall.mp4")
 	success, image = vid.read()
@@ -40,7 +41,7 @@ if __name__=="__main__":
 	out.release()
 	cv2.destroyAllWindows() 
 	if count ==4:
-		vioLength, warnLength = homography(1.5)
+		vioLength, warnLength = homography(avg_height)
 		vioLength = int(vioLength//1)
 		warnLength = int(warnLength//1)
 		pose_extractor.main_code(vioLength, warnLength)
