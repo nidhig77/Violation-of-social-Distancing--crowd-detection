@@ -77,7 +77,7 @@ if uploaded_file is not None and avg_height > 0:
         model = YOLO("yolov8m-pose.pt")
 
         out = cv2.VideoWriter(
-            "transformed_video.mp4", cv2.VideoWriter_fourcc(*"mp4v"), 60, (1280, 720)
+            "transformed_video.mp4", cv2.VideoWriter_fourcc(*"mp4v"), 30, (1280, 720)
         )
         violations_count = 0
         frame_count = 0
