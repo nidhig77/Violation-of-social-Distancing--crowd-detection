@@ -3,7 +3,7 @@ from ultralytics import YOLO
 import numpy as np
 import heatmap
 import os
-
+#from show_violators import show_violators
 model = YOLO('yolov8m-pose.pt')
 violationsVsFrame = []
 warningsVsFrame = []
@@ -14,7 +14,8 @@ def main_code(violationData, warningData):
         os.remove('file.csv')
     if(os.path.exists('file2.csv')):
         os.remove('file2.csv')
-    results = model("transformed_video.mp4", show=True,stream=True)
+    results = model("transformed_video.mp4", show=False,stream=False)
+    violators_for_each_frame = []
     for r in results:
         no_of_persons = r.keypoints.xy.size(0)
 
@@ -46,7 +47,8 @@ def main_code(violationData, warningData):
         for i in range(len(cordarray)):
             cor[int(cordarray[i][1]//1)][int(cordarray[i][0]//1)]=1
         
-        violations, warnings=(heatmap.heatmap(cor,warningData,violationData))
+        violators, violations, warnings=(heatmap.heatmap(cor,warningData,violationData))
+        violators_for_each_frame.append(violators)
         violationsVsFrame.append(violations)
         warningsVsFrame.append(warnings)
         vioDict = {'vio': violationsVsFrame}
@@ -55,6 +57,8 @@ def main_code(violationData, warningData):
         df2 =pd.DataFrame(warnDict)
         df.to_csv('file.csv')
         df2.to_csv('file2.csv')
+    return violators_for_each_frame
+    
 
 
            
