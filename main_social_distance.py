@@ -7,7 +7,8 @@ from show_violators import show_violators
 import streamlit as st
 import tempfile
 import time
-
+import pandas as pd
+import statistics
 st.title("Social Distancing Violator Detector")
 
 avg_height = st.number_input(
@@ -53,7 +54,7 @@ if uploaded_file is not None and avg_height > 0:
         transformed_frame = bird_eye_transform(image, points, pts2)
         out.write(transformed_frame)
 
-        count += 5
+        count += 10
 
     vid.release()
     out.release()
@@ -77,12 +78,24 @@ if uploaded_file is not None and avg_height > 0:
 
             frame_count += 1
             if frame_count < len(violators_for_each_frame) and violators_for_each_frame[frame_count]:
+                violator_positions = []
                 for x, y in violators_for_each_frame[frame_count]:
-                    cv2.rectangle(frame, (x - 15, y - 15), (x + 15, y + 15), (0, 0, 0), 7)  
+                    cv2.rectangle(frame, (x - 15, y - 15), (x + 15, y + 15), (0, 0, 255), 7)  # Draw rectangle
+                    violator_positions.append((x, y))
+
+                # Draw lines between violators
+                for i in range(len(violator_positions)):
+                    for j in range(i + 1, len(violator_positions)):
+                        pt1 = violator_positions[i]
+                        pt2 = violator_positions[j]
+                        cv2.line(frame, pt1, pt2, (255, 0, 0), 2)
 
             stframe.image(frame, channels="BGR")
             time.sleep(0.5)
 
         cap.release()
+        df=pd.read_csv("file.csv")
+        a= statistics.mean(df['vio'])
+        st.success(f'Average violations {a}')
 else:
     st.write("Please upload a video file and enter the average height.")

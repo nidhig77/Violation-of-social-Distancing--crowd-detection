@@ -4,11 +4,7 @@ import cv2
 import numpy
 
 def heatmap(anum2,warnThresh,violationThresh):
-    plt.ion()
-    colors = [(20/255, 252/255, 3/255), (252/255, 186/255, 3/255), (1, 0, 0)]  # Green, Yellow, Red
-    cmap = LinearSegmentedColormap.from_list('CustomMap', colors)
-
-    plt.clf()
+    
     hm = numpy.zeros([720,1280], dtype=float)
 
     violations = 0
@@ -52,7 +48,5 @@ def heatmap(anum2,warnThresh,violationThresh):
     hm_blurred[-1][-1]=2
     hm_blurred[-1][-2]=1
     
-    plt.imshow(hm_blurred, cmap=cmap, interpolation='gaussian')
-    plt.colorbar(ticks=[0, 1, 2], label='Value').set_ticklabels(['Safe', 'Warning', 'Violation'])
-    plt.draw()
+    
     return(violator, violations,warnings)
