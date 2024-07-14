@@ -3,18 +3,19 @@ from ultralytics import YOLO
 import numpy as np
 import heatmap
 import os
+import streamlit as st
 #from show_violators import show_violators
 model = YOLO('yolov8m-pose.pt')
 violationsVsFrame = []
 warningsVsFrame = []
-
+placeholder=st.empty()
 
 def main_code(violationData, warningData):
     if(os.path.exists('file.csv')):
         os.remove('file.csv')
     if(os.path.exists('file2.csv')):
         os.remove('file2.csv')
-    results = model("transformed_video.mp4", show=False,stream=False)
+    results = model("transformed_video.mp4", show=False,stream=True)
     violators_for_each_frame = []
     for r in results:
         no_of_persons = r.keypoints.xy.size(0)
